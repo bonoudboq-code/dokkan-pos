@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import ImageWithBasePath from '../../core/img/imagewithbasebath';
+import { Link } from 'react-router-dom';
+import { ChevronUp, Filter, PlusCircle, RotateCcw, Sliders, StopCircle, Zap } from 'feather-icons-react/build/IconComponents';
 import { useDispatch, useSelector } from 'react-redux';
+import { setToogleHeader, setcategotylist_data } from '../../core/redux/action';
+import Select from 'react-select';
+import { DatePicker } from 'antd';
+import AddCategoryList from '../../core/modals/inventory/addcategorylist';
+import EditCategoryList from '../../core/modals/inventory/editcategorylist';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
+import Table from '../../core/pagination/datatable';
 import { getCategories } from '../../services/supabaseService';
-import { setcategotylist_data, setToogleHeader } from '../../core/redux/action';
 
 const CategoryList = () => {
 

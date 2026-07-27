@@ -26,6 +26,7 @@
     "chart.js": "^4.4.2",
     "chartjs": "^0.3.24",
     "clipboard-copy": "^4.0.1",
+    "cross-env": "^10.1.0",
     "datatables.net": "^1.13.11",
     "dayjs": "^1.11.10",
     "dragula": "^3.7.3",
@@ -81,7 +82,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "cross-env CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
