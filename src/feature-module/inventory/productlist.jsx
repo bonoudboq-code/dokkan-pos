@@ -11,24 +11,41 @@ import {
   StopCircle,
   Trash2,
 } from "feather-icons-react/build/IconComponents";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import Select from "react-select";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
-import Brand from "../../core/modals/inventory/brand";
-import withReactContent from "sweetalert2-react-content";
-import Swal from "sweetalert2";
-import { all_routes } from "../../Router/all_routes";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import Table from "../../core/pagination/datatable";
-import { setToogleHeader } from "../../core/redux/action";
-import { Download } from "react-feather";
+import { getProducts } from "../../services/supabaseService";
+import { set_product_list, setToogleHeader } from "../../core/redux/action";
 
 const ProductList = () => {
   const dataSource = useSelector((state) => state.product_list);
   const dispatch = useDispatch();
   const data = useSelector((state) => state.toggle_header);
+
+  useEffect(() => {
+    const fetchSupabaseProducts = async () => {
+      try {
+        const supabaseProducts = await getProducts();
+        if (supabaseProducts && supabaseProducts.length > 0) {
+          const formatted = supabaseProducts.map((item) => ({
+            id: item.id,
+            product: item.name,
+            sku: item.sku || "N/A",
+            category: item.categories?.name || "عام",
+            brand: "دكان",
+            price: `${item.selling_price} ج.م`,
+            unit: item.units?.name || "قطعة",
+            qty: String(item.quantity || 0),
+            createdby: "المشرف",
+            productImage: item.image_url || "assets/img/products/product1.jpg",
+          }));
+          dispatch(set_product_list(formatted));
+        }
+      } catch (err) {
+        console.log("Supabase fetch info:", err);
+      }
+    };
+    fetchSupabaseProducts();
+  }, [dispatch]);
 
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const toggleFilterVisibility = () => {

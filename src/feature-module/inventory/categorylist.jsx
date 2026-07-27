@@ -1,23 +1,34 @@
-import React, { useState } from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import ImageWithBasePath from '../../core/img/imagewithbasebath';
-import { Link } from 'react-router-dom';
-import { ChevronUp, Filter, PlusCircle, RotateCcw, Sliders, StopCircle, Zap } from 'feather-icons-react/build/IconComponents';
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setToogleHeader } from '../../core/redux/action';
-import Select from 'react-select';
-import { DatePicker } from 'antd';
-import AddCategoryList from '../../core/modals/inventory/addcategorylist';
-import EditCategoryList from '../../core/modals/inventory/editcategorylist';
-import withReactContent from 'sweetalert2-react-content';
-import Swal from 'sweetalert2';
-import Table from '../../core/pagination/datatable'
+import { getCategories } from '../../services/supabaseService';
+import { setcategotylist_data, setToogleHeader } from '../../core/redux/action';
 
 const CategoryList = () => {
 
     const dispatch = useDispatch();
     const data = useSelector((state) => state.toggle_header);
     const dataSource = useSelector((state) => state.categotylist_data);
+
+    useEffect(() => {
+        const fetchSupabaseCategories = async () => {
+            try {
+                const supabaseCategories = await getCategories();
+                if (supabaseCategories && supabaseCategories.length > 0) {
+                    const formatted = supabaseCategories.map((item) => ({
+                        id: item.id,
+                        category: item.name,
+                        categoryslug: item.code || 'N/A',
+                        createdon: new Date(item.created_at).toLocaleDateString('ar-EG'),
+                        status: 'نشط',
+                    }));
+                    dispatch(setcategotylist_data(formatted));
+                }
+            } catch (err) {
+                console.log('Supabase categories info:', err);
+            }
+        };
+        fetchSupabaseCategories();
+    }, [dispatch]);
 
     const [isFilterVisible, setIsFilterVisible] = useState(false);
     const toggleFilterVisibility = () => {
